@@ -1,3 +1,4 @@
+import 'package:doan/Views/Auth/register_view.dart';
 import 'package:flutter/material.dart';
 import '../../Components/app_text_field.dart';
 import '../../Components/primary_button.dart';
@@ -331,6 +332,10 @@ class _LoginViewState extends State<LoginView> {
                       TextButton(
                         onPressed: () {
                           // TODO: điều hướng đăng ký
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const RegisterView()),
+                          );
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
