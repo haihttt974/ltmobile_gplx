@@ -132,6 +132,118 @@ class AuthService {
 
     throw AuthException("Xác minh OTP thất bại (${resp.statusCode})");
   }
+
+  Future<void> sendResetLink(String email) async {
+    final resp = await _api.post(
+      "/auth/forgot-password",
+      { "email": email },
+    );
+
+    if (resp.statusCode == 200) {
+      return;
+    }
+
+    // cố gắng lấy message backend
+    try {
+      final body = jsonDecode(resp.body);
+      if (body is Map && body["message"] is String) {
+        throw AuthException(body["message"]);
+      }
+    } catch (_) {}
+
+    throw AuthException("Không thể gửi email đặt lại mật khẩu (${resp.statusCode})");
+  }
+  // === QUÊN MẬT KHẨU (3 bước) ===
+
+  // B1: Gửi OTP reset password về email
+  // POST /auth/forgot-password/send
+  Future<void> sendForgotPasswordOtp(String email) async {
+    final http.Response resp = await _api.post(
+      "/auth/forgot-password/send",
+      {
+        "email": email,
+      },
+    );
+
+    if (resp.statusCode == 200) {
+      // success, không cần data thêm
+      return;
+    }
+
+    // lỗi -> cố gắng đọc message backend
+    try {
+      final body = jsonDecode(resp.body);
+      if (body is Map && body["message"] is String) {
+        throw AuthException(body["message"]);
+      }
+    } catch (_) {}
+
+    throw AuthException("Không thể gửi OTP (${resp.statusCode})");
+  }
+
+  // B2: Xác thực OTP, backend trả resetToken
+  // POST /auth/forgot-password/verify
+  Future<String> verifyForgotPassword({
+    required String email,
+    required String otpCode,
+  }) async {
+    final http.Response resp = await _api.post(
+      "/auth/forgot-password/verify",
+      {
+        "email": email,
+        "otpCode": otpCode,
+      },
+    );
+
+    if (resp.statusCode == 200) {
+      final data = jsonDecode(resp.body);
+      // backend trả { message: "...", resetToken: "..." }
+      final token = data["resetToken"];
+      if (token is String && token.isNotEmpty) {
+        return token;
+      }
+      // nếu vì lý do gì backend không trả resetToken
+      throw AuthException("Thiếu resetToken từ server");
+    }
+
+    try {
+      final body = jsonDecode(resp.body);
+      if (body is Map && body["message"] is String) {
+        throw AuthException(body["message"]);
+      }
+    } catch (_) {}
+
+    throw AuthException("OTP không hợp lệ (${resp.statusCode})");
+  }
+
+  // B3: Gửi mật khẩu mới kèm resetToken
+  // POST /auth/forgot-password/reset
+  Future<void> resetPassword({
+    required String resetToken,
+    required String newPassword,
+  }) async {
+    final http.Response resp = await _api.post(
+      "/auth/forgot-password/reset",
+      {
+        "resetToken": resetToken,
+        "newPassword": newPassword,
+      },
+    );
+
+    if (resp.statusCode == 200) {
+      // success đổi mật khẩu ok
+      return;
+    }
+
+    try {
+      final body = jsonDecode(resp.body);
+      if (body is Map && body["message"] is String) {
+        throw AuthException(body["message"]);
+      }
+    } catch (_) {}
+
+    throw AuthException("Đổi mật khẩu thất bại (${resp.statusCode})");
+  }
 }
 
 class AuthException implements Exception {

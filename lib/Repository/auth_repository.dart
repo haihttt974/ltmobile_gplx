@@ -64,4 +64,32 @@ class AuthRepository {
     await prefs.remove("user_name");
     await prefs.remove("user_avatar");
   }
+  Future<void> sendResetLink(String email) async {
+    await _authService.sendResetLink(email);
+  }
+
+  // ======================
+  // QUÊN MẬT KHẨU FLOW MỚI
+  // ======================
+
+  // B1: gửi OTP về email
+  Future<void> sendForgotPasswordOtp(String email) async {
+    await _authService.sendForgotPasswordOtp(email);
+  }
+
+  // B2: xác thực OTP -> lấy resetToken
+  Future<String> verifyForgotPassword(String email, String otpCode) async {
+    return await _authService.verifyForgotPassword(
+      email: email,
+      otpCode: otpCode,
+    );
+  }
+
+  // B3: đặt lại mật khẩu bằng resetToken
+  Future<void> resetPassword(String resetToken, String newPassword) async {
+    await _authService.resetPassword(
+      resetToken: resetToken,
+      newPassword: newPassword,
+    );
+  }
 }

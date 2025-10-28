@@ -1,3 +1,4 @@
+import 'package:doan/Views/Auth/forgot_password_view.dart';
 import 'package:doan/Views/Auth/register_view.dart';
 import 'package:flutter/material.dart';
 import '../../Components/app_text_field.dart';
@@ -210,6 +211,10 @@ class _LoginViewState extends State<LoginView> {
                       TextButton(
                         onPressed: () {
                           // TODO: điều hướng quên mật khẩu
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ForgotPasswordView()),
+                          );
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
