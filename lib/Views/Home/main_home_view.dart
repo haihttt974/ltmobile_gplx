@@ -1,18 +1,38 @@
+import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../Styles/app_colors.dart';
-import '../auth/login_view.dart';
+import '../Auth/login_view.dart';
+import '../Rank/select_hang_view.dart';
 
-class MainHomeView extends StatelessWidget {
+class MainHomeView extends StatefulWidget {
   const MainHomeView({super.key});
+
+  @override
+  State<MainHomeView> createState() => _MainHomeViewState();
+}
+
+class _MainHomeViewState extends State<MainHomeView> {
+  String? _userEmail;
+  String? _selectedHangName;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserData();
+  }
+
+  Future<void> _loadUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userEmail = prefs.getString('user_email');
+      _selectedHangName = prefs.getString('selected_hang_name');
+    });
+  }
 
   Future<void> _handleLogout(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("auth_token");
-    await prefs.remove("user_id");
-    await prefs.remove("user_email");
-
-    // Điều hướng về màn Login và xóa toàn bộ navigation stack
+    await prefs.clear();
     if (context.mounted) {
       Navigator.of(context).pushAndRemoveUntil(
         MaterialPageRoute(builder: (_) => const LoginView()),
@@ -21,22 +41,26 @@ class MainHomeView extends StatelessWidget {
     }
   }
 
+  Future<void> _changeHang() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const SelectHangView()),
+    );
+    _loadUserData(); // cập nhật lại sau khi chọn hạng
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgDark,
       appBar: AppBar(
         backgroundColor: AppColors.bgDark,
-        elevation: 0,
-        title: const Text(
-          "Trang chính",
-          style: TextStyle(color: Colors.white),
-        ),
-        centerTitle: true,
+        title: const Text("Trang chính",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
         actions: [
           IconButton(
-            tooltip: "Đăng xuất",
             icon: const Icon(Icons.logout, color: Colors.white),
+            tooltip: "Đăng xuất",
             onPressed: () => _handleLogout(context),
           ),
         ],
@@ -45,30 +69,62 @@ class MainHomeView extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              "Xin chào, bạn đã đăng nhập!",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18,
+            if (_userEmail != null)
+              Text(
+                "Xin chào, $_userEmail!",
+                style: const TextStyle(color: Colors.white, fontSize: 18),
               ),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                foregroundColor: Colors.white,
-                padding:
-                const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+            const SizedBox(height: 16),
+            if (_selectedHangName != null)
+              Column(
+                children: [
+                  Text(
+                    "Hạng GPLX hiện tại:",
+                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    _selectedHangName!,
+                    style: const TextStyle(
+                      color: Colors.lightBlueAccent,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: _changeHang,
+                    icon: const Icon(Icons.swap_horiz),
+                    label: const Text("Đổi hạng khác"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const SelectBoDeTnView()),
+                      );
+                    },
+                    icon: const Icon(Icons.library_books),
+                    label: const Text("Bộ đề trắc nghiệm"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                ],
+              )
+            else
+              ElevatedButton.icon(
+                onPressed: _changeHang,
+                icon: const Icon(Icons.settings),
+                label: const Text("Chọn hạng GPLX"),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent,
                 ),
               ),
-              onPressed: () => _handleLogout(context),
-              child: const Text(
-                "Đăng xuất",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-              ),
-            ),
           ],
         ),
       ),
