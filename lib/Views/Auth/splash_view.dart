@@ -24,14 +24,13 @@ class _SplashViewState extends State<SplashView> {
     final token = prefs.getString("auth_token");
 
     // logic tối giản: chỉ cần có token là coi như đăng nhập
-    final Widget next = (token != null && token.isNotEmpty)
-        ? const MainHomeView()
-        : const LoginView();
+
+    final String nextRoute = (token != null && token.isNotEmpty)
+        ? '/home'
+        : '/login';
 
     if (!mounted) return;
-    Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (_) => next),
-    );
+    Navigator.pushReplacementNamed(context, nextRoute);
   }
 
   @override
