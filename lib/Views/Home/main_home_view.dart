@@ -1,3 +1,4 @@
+import 'package:doan/Views/BienBao/bien_bao_list_view.dart';
 import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -111,6 +112,20 @@ class _MainHomeViewState extends State<MainHomeView> {
                     label: const Text("Bộ đề trắc nghiệm"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BienBaoListView()),
+                      );
+                    },
+                    icon: const Icon(Icons.traffic),
+                    label: const Text("Biển báo"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orangeAccent,
                       foregroundColor: Colors.white,
                     ),
                   ),

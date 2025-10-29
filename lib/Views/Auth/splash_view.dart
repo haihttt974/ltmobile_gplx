@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../Home/main_home_view.dart';
 import 'login_view.dart';
-import '../../../Styles/app_colors.dart';
+import '../../Styles/app_colors.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
