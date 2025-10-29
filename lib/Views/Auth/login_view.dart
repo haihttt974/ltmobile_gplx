@@ -1,3 +1,5 @@
+import 'package:doan/Views/Auth/forgot_password_view.dart';
+import 'package:doan/Views/Auth/register_view.dart';
 import 'package:flutter/material.dart';
 import '../../Components/app_text_field.dart';
 import '../../Components/primary_button.dart';
@@ -49,9 +51,10 @@ class _LoginViewState extends State<LoginView> {
       );
 
       if (!mounted) return;
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (_) => const MainHomeView()),
-      );
+      // Navigator.of(context).pushReplacement(
+      //   MaterialPageRoute(builder: (_) => const MainHomeView()),
+      // );
+      Navigator.pushReplacementNamed(context, '/home');
     } catch (e) {
       setState(() {
         _errorMsg = e.toString();
@@ -209,6 +212,11 @@ class _LoginViewState extends State<LoginView> {
                       TextButton(
                         onPressed: () {
                           // TODO: điều hướng quên mật khẩu
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (_) => const ForgotPasswordView()),
+                          // );
+                          Navigator.pushNamed(context, '/forgot-password');
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -331,6 +339,11 @@ class _LoginViewState extends State<LoginView> {
                       TextButton(
                         onPressed: () {
                           // TODO: điều hướng đăng ký
+                          // Navigator.push(
+                          //   context,
+                          //   MaterialPageRoute(builder: (_) => const RegisterView()),
+                          // );
+                          Navigator.pushNamed(context, '/register');
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
