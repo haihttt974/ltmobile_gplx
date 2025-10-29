@@ -34,11 +34,12 @@ class _VerifyOtpViewState extends State<VerifyOtpView> {
       final auth = await _repo.verify(req);
 
       if (mounted) {
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => const MainHomeView()),
-              (route) => false,
-        );
+        // Navigator.pushAndRemoveUntil(
+        //   context,
+        //   MaterialPageRoute(builder: (_) => const MainHomeView()),
+        //       (route) => false,
+        // );
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       }
     } catch (e) {
       if (mounted) {

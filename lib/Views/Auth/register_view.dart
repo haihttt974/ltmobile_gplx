@@ -28,12 +28,19 @@ class _RegisterViewState extends State<RegisterView> {
         soDienThoai: _phone.text,
       );
       await _repo.register(req);
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => VerifyOtpView(email: _email.text),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => VerifyOtpView(email: _email.text),
+      //   ),
+      // );
+      if (mounted) {
+        Navigator.pushNamed(
+          context,
+          '/verify-otp',
+          arguments: _email.text,
+        );
+      }
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text("Lỗi: $e")));

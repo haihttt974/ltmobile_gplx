@@ -66,12 +66,13 @@ class _ForgotPasswordNewPassViewState extends State<ForgotPasswordNewPassView> {
       // Có thể pop về LoginView ở đây
       // Navigator.pushReplacement(...)
       if (!mounted) return;
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (_) => LoginView(), // TODO: thay bằng LoginView()
-        ),
-            (route) => false,
-      );
+      // Navigator.of(context).pushAndRemoveUntil(
+      //   MaterialPageRoute(
+      //     builder: (_) => LoginView(), // TODO: thay bằng LoginView()
+      //   ),
+      //       (route) => false,
+      // );
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
 
     } catch (e) {
       setState(() {

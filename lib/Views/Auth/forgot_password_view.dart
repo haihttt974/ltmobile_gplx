@@ -18,6 +18,7 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
   String _errorMsg = "";
   String _successMsg = "";
   final _repo = AuthRepository();
+
   Future<void> _sendOtp() async {
     final email = _emailCtrl.text.trim();
     final emailError = Validators.validateEmail(email);
@@ -44,12 +45,13 @@ class _ForgotPasswordViewState extends State<ForgotPasswordView> {
       });
 
       if (!mounted) return;
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => ForgotPasswordOtpView(email: email),
-        ),
-      );
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => ForgotPasswordOtpView(email: email),
+      //   ),
+      // );
+      Navigator.pushNamed(context, '/forgot-password-otp', arguments: email);
     } catch (e) {
       setState(() {
         _errorMsg =

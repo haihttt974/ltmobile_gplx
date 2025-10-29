@@ -47,14 +47,22 @@ class _ForgotPasswordOtpViewState extends State<ForgotPasswordOtpView> {
       });
 
       if (!mounted) return;
-      Navigator.push(
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (_) => ForgotPasswordNewPassView(
+      //       email: widget.email,
+      //       resetToken: resetToken,
+      //     ),
+      //   ),
+      // );
+      Navigator.pushNamed(
         context,
-        MaterialPageRoute(
-          builder: (_) => ForgotPasswordNewPassView(
-            email: widget.email,
-            resetToken: resetToken,
-          ),
-        ),
+        '/forgot-password-newpass',
+        arguments: {
+          'email': widget.email,
+          'resetToken': resetToken,
+        },
       );
     } catch (e) {
       setState(() {
