@@ -24,6 +24,7 @@ class _SplashViewState extends State<SplashView> {
     final token = prefs.getString("auth_token");
 
     // logic tối giản: chỉ cần có token là coi như đăng nhập
+
     final String nextRoute = (token != null && token.isNotEmpty)
         ? '/home'
         : '/login';
