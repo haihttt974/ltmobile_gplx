@@ -1,11 +1,14 @@
+import 'package:doan/Views/BienBao/bien_bao_list_view.dart';
+import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Styles/app_colors.dart';
 import '../Auth/login_view.dart';
 import '../Rank/select_hang_view.dart';
-import '../SetOfQuestions/select_bo_de_tn_view.dart';
+import '../SetOfQuestions/select_bo_de_tn_view.dart'; 
 import '../Tip/tips_list_screen.dart';
+
 
 class MainHomeView extends StatefulWidget {
   const MainHomeView({super.key});
@@ -61,6 +64,7 @@ class _MainHomeViewState extends State<MainHomeView> {
           "Trang chính",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
+
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
@@ -98,6 +102,7 @@ class _MainHomeViewState extends State<MainHomeView> {
                   const SizedBox(height: 16),
 
                   // Đổi hạng
+
                   ElevatedButton.icon(
                     onPressed: _changeHang,
                     icon: const Icon(Icons.swap_horiz),
@@ -128,6 +133,7 @@ class _MainHomeViewState extends State<MainHomeView> {
                   const SizedBox(height: 10),
 
                   // 🔥 Mẹo ghi nhớ
+
                   ElevatedButton.icon(
                     onPressed: () {
                       Navigator.push(
@@ -141,6 +147,20 @@ class _MainHomeViewState extends State<MainHomeView> {
                     label: const Text("Mẹo ghi nhớ"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF22C55E),
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+				          ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const BienBaoListView()),
+                      );
+                    },
+                    icon: const Icon(Icons.traffic),
+                    label: const Text("Biển báo"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orangeAccent,
                       foregroundColor: Colors.white,
                     ),
                   ),
