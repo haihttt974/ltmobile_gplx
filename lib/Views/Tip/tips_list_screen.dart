@@ -1,18 +1,151 @@
 import 'package:flutter/material.dart';
 import '../../Styles/app_theme.dart';
 import 'tips_memory_screen.dart';
+import 'dart:convert';
 
-class TipsListScreen extends StatelessWidget {
+class TipsListScreen extends StatefulWidget {
   const TipsListScreen({super.key});
 
   @override
+  State<TipsListScreen> createState() => _TipsListScreenState();
+}
+
+class _TipsListScreenState extends State<TipsListScreen> {
+  String searchQuery = '';
+  final TextEditingController _controller = TextEditingController();
+
+  // Dữ liệu cứng các mẹo (như trong danh sách)
+  final List<Map<String, dynamic>> allTips = [
+    {
+      'title': 'Nồng độ cồn',
+      'subtitle': '1 mẹo',
+      'colors': [Color(0xFFEC6F66), Color(0xFFF3A183)],
+      'key': 'alcohol',
+      'keywords': ['cồn', 'nồng độ', 'alcohol', 'bia', 'rượu']
+    },
+    {
+      'title': 'Khoảng cách an toàn',
+      'subtitle': '2 mẹo',
+      'colors': [Color(0xFF56CCF2), Color(0xFF2F80ED)],
+      'key': 'distance',
+      'keywords': ['khoảng cách', 'distance', 'an toàn']
+    },
+    {
+      'title': 'Các hạng GPLX',
+      'subtitle': '4 mẹo',
+      'colors': [Color(0xFF9C27B0), Color(0xFFE91E63)],
+      'key': 'license',
+      'keywords': ['bằng lái', 'gplx', 'license', 'driving license']
+    },
+    {
+      'title': 'Hỏi về tuổi',
+      'subtitle': '1 nhóm',
+      'colors': [Color(0xFF00B09B), Color(0xFF96C93D)],
+      'key': 'age',
+      'keywords': ['tuổi', 'age']
+    },
+    {
+      'title': 'Cao tốc/đường hầm/nơi hạn chế',
+      'subtitle': '1 nhóm',
+      'colors': [Color(0xFFfbab66), Color(0xFFf7418c)],
+      'key': 'rules',
+      'keywords': ['cao tốc', 'đường hầm', 'hạn chế', 'highway', 'tunnel']
+    },
+    {
+      'title': 'Nhất chớm – Nhì ưu – Tam – Tứ',
+      'subtitle': '1 nhóm',
+      'colors': [Color(0xFF36D1DC), Color(0xFF5B86E5)],
+      'key': 'priority',
+      'keywords': ['ưu tiên', 'chớm', 'priority']
+    },
+    {
+      'title': 'Biển báo & nhóm biển',
+      'subtitle': '2 mẹo',
+      'colors': [Color(0xFFf7971e), Color(0xFFffd200)],
+      'key': 'signs',
+      'keywords': ['biển', 'biển báo', 'sign', 'signs']
+    },
+    {
+      'title': 'Tốc độ tối đa',
+      'subtitle': '4 nhóm',
+      'colors': [Color(0xFFee0979), Color(0xFFff6a00)],
+      'key': 'speed',
+      'keywords': ['tốc độ', 'speed']
+    },
+    {
+      'title': 'Khái niệm & quy tắc nhanh',
+      'subtitle': '1 nhóm',
+      'colors': [Color(0xFF12c2e9), Color(0xFFc471ed)],
+      'key': 'concept',
+      'keywords': ['khái niệm', 'quy tắc', 'concept', 'rule']
+    },
+    {
+      'title': 'Nghiệp vụ vận tải',
+      'subtitle': '1 nhóm',
+      'colors': [Color(0xFF43cea2), Color(0xFF185a9d)],
+      'key': 'transport',
+      'keywords': ['vận tải', 'transport']
+    },
+    {
+      'title': 'Kỹ thuật lái xe',
+      'subtitle': '1 nhóm',
+      'colors': [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+      'key': 'technic',
+      'keywords': ['kỹ thuật', 'technic', 'driving technique']
+    },
+    {
+      'title': 'Cấu tạo & sửa chữa',
+      'subtitle': '1 nhóm',
+      'colors': [Color(0xFF00c6ff), Color(0xFF0072ff)],
+      'key': 'mechanic',
+      'keywords': ['sửa chữa', 'cấu tạo', 'mechanic', 'repair']
+    },
+    {
+      'title': 'Các quy tắc sa hình khác',
+      'subtitle': 'Ưu tiên & dốc',
+      'colors': [Color(0xFFff9966), Color(0xFFff5e62)],
+      'key': 'intersection',
+      'keywords': ['sa hình', 'intersection', 'dốc']
+    },
+  ];
+
+  // Bỏ dấu tiếng Việt để tìm không dấu
+  String _normalize(String input) {
+    const withDiacritics =
+        'àáạảãâầấậẩẫăằắặẳẵèéẹẻẽêềếệểễìíịỉĩòóọỏõôồốộổỗơờớợởỡùúụủũưừứựửữỳýỵỷỹđ';
+    const withoutDiacritics =
+        'aaaaaaaaaaaaaaaaaeeeeeeeeeeeiiiiiooooooooooooooooouuuuuuuuuuuyyyyyd';
+    var result = input.toLowerCase();
+    for (var i = 0; i < withDiacritics.length; i++) {
+      result = result.replaceAll(withDiacritics[i], withoutDiacritics[i]);
+    }
+    return result;
+  }
+
+  List<Map<String, dynamic>> _filteredTips() {
+    if (searchQuery.isEmpty) return allTips;
+    final norm = _normalize(searchQuery);
+    return allTips.where((tip) {
+      final normTitle = _normalize(tip['title']);
+      final normSub = _normalize(tip['subtitle']);
+      final normKeywords =
+      (tip['keywords'] as List).map((e) => _normalize(e)).toList();
+      return normTitle.contains(norm) ||
+          normSub.contains(norm) ||
+          normKeywords.any((k) => k.contains(norm));
+    }).toList();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final filtered = _filteredTips();
+
     return Scaffold(
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 20),
           children: [
-            // Header + ô tìm kiếm mẫu (không cần logic)
+            // ===== Header có gradient + ô tìm kiếm =====
             Container(
               decoration: AppTheme.headerGradient(
                 const Color(0xFFEC6F66),
@@ -22,10 +155,23 @@ class TipsListScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Row(
-                    children: const [
-                      Icon(Icons.lightbulb, color: Colors.white),
-                      SizedBox(width: 8),
-                      Expanded(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.arrow_back, color: Colors.white),
+                        onPressed: () {
+                          Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            '/home',
+                                (route) => false,
+                          );
+                        },
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(Icons.lightbulb, color: Colors.white),
+                      const SizedBox(width: 8),
+                      const Expanded(
                         child: Text(
                           'Mẹo ghi nhớ',
                           style: TextStyle(
@@ -35,7 +181,7 @@ class TipsListScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      Icon(Icons.share_outlined, color: Colors.white),
+                      const Icon(Icons.share_outlined, color: Colors.white),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -47,13 +193,24 @@ class TipsListScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 10),
                     child: Row(
-                      children: const [
-                        Icon(Icons.search, color: Colors.white70, size: 18),
-                        SizedBox(width: 8),
+                      children: [
+                        const Icon(Icons.search,
+                            color: Colors.white70, size: 18),
+                        const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            'Tìm mẹo ghi nhớ...',
-                            style: TextStyle(color: Colors.white70),
+                          child: TextField(
+                            controller: _controller,
+                            style: const TextStyle(color: Colors.white),
+                            cursorColor: Colors.white,
+                            decoration: const InputDecoration(
+                              hintText: 'Tìm mẹo ghi nhớ...',
+                              hintStyle: TextStyle(color: Colors.white70),
+                              border: InputBorder.none,
+                            ),
+                            onSubmitted: (value) =>
+                                setState(() => searchQuery = value),
+                            onChanged: (value) =>
+                                setState(() => searchQuery = value),
                           ),
                         ),
                       ],
@@ -63,56 +220,23 @@ class TipsListScreen extends StatelessWidget {
               ),
             ),
 
-            // Counters
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Row(
-                children: const [
-                  _Counter(value: '12', label: 'Chủ đề'),
-                  _Counter(value: '19', label: 'Mẹo hay'),
-                  _Counter(value: '0', label: 'Đã lưu'),
-                ],
-              ),
-            ),
-
-            // Danh sách chủ đề
-            ..._categories.map(
-                  (c) => _GradientTile(
-                title: c.title,
-                subtitle: c.subtitle,
-                colors: c.colors,
-                icon: c.icon,
-                onTap: () {
-                  // ⬇️ Điều hướng trực tiếp, chỉ hiển thị 1 section tương ứng
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => TipsMemoryScreen(
-                        onlySectionKey: c.sectionKey,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-
-            const SizedBox(height: 8),
-            // Footer note
-            Container(
-              decoration: AppTheme.softSurface(context),
-              padding: const EdgeInsets.all(14),
-              child: Row(
-                children: const [
-                  Icon(Icons.emoji_events_outlined),
-                  SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Học mẹo, thi đỗ dễ! Tổng hợp từ kinh nghiệm học viên đã thi đỗ.',
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            // ===== Hiển thị danh sách mẹo (lọc theo từ khóa) =====
+            const SizedBox(height: 10),
+            if (filtered.isEmpty)
+              const Padding(
+                padding: EdgeInsets.only(top: 30),
+                child: Center(
+                  child: Text('Không tìm thấy mẹo phù hợp 😅'),
+                ),
+              )
+            else
+              for (final tip in filtered)
+                _TipCategoryCard(
+                  title: tip['title'],
+                  subtitle: tip['subtitle'],
+                  colors: List<Color>.from(tip['colors']),
+                  sectionKey: tip['key'],
+                ),
           ],
         ),
       ),
@@ -120,78 +244,40 @@ class TipsListScreen extends StatelessWidget {
   }
 }
 
-// ==== UI helpers =============================================================
-class _Counter extends StatelessWidget {
-  final String value;
-  final String label;
-  const _Counter({required this.value, required this.label});
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Column(
-        children: [
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
-          ),
-          const SizedBox(height: 2),
-          Text(label,
-              style: const TextStyle(fontSize: 12, color: Colors.black54)),
-        ],
-      ),
-    );
-  }
-}
+// ================== Card mẹo ==================
 
-class _GradientTile extends StatelessWidget {
-  final String title, subtitle;
+class _TipCategoryCard extends StatelessWidget {
+  final String title;
+  final String subtitle;
   final List<Color> colors;
-  final IconData icon;
-  final VoidCallback onTap;
+  final String sectionKey;
 
-  const _GradientTile({
+  const _TipCategoryCard({
     required this.title,
     required this.subtitle,
     required this.colors,
-    required this.icon,
-    required this.onTap,
+    required this.sectionKey,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       borderRadius: BorderRadius.circular(14),
-      onTap: onTap,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => TipsMemoryScreen(onlySectionKey: sectionKey),
+          ),
+        );
+      },
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 6),
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: colors,
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-          ),
-          borderRadius: BorderRadius.circular(14),
-          boxShadow: const [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 6,
-              offset: Offset(0, 3),
-            )
-          ],
-        ),
+        decoration: AppTheme.headerGradient(colors[0], colors[1]),
         padding: const EdgeInsets.fromLTRB(14, 14, 14, 14),
         child: Row(
           children: [
-            Container(
-              width: 28,
-              height: 28,
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(8),
-              ),
-              alignment: Alignment.center,
-              child: Icon(icon, color: Colors.white),
-            ),
+            const Icon(Icons.tips_and_updates, color: Colors.white),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
@@ -204,8 +290,8 @@ class _GradientTile extends StatelessWidget {
                           fontSize: 15)),
                   const SizedBox(height: 2),
                   Text(subtitle,
-                      style:
-                      const TextStyle(color: Colors.white70, fontSize: 12)),
+                      style: const TextStyle(
+                          color: Colors.white70, fontSize: 12)),
                 ],
               ),
             ),
@@ -216,40 +302,3 @@ class _GradientTile extends StatelessWidget {
     );
   }
 }
-
-// ==== Dữ liệu menu ===========================================================
-class _Cat {
-  final String sectionKey, title, subtitle;
-  final List<Color> colors;
-  final IconData icon;
-  const _Cat(
-      this.sectionKey, this.title, this.subtitle, this.colors, this.icon);
-}
-
-// NOTE: sectionKey phải khớp với TipsMemoryScreen._sectionByKey()
-const _categories = <_Cat>[
-  _Cat('alcohol', 'Nồng độ cồn', '1 mẹo',
-      [Color(0xFFEC6F66), Color(0xFFF3A183)], Icons.traffic),
-  _Cat('distance', 'Khoảng cách an toàn', '2 mẹo',
-      [Color(0xFF56CCF2), Color(0xFF2F80ED)], Icons.timeline),
-  _Cat('license', 'Các hạng GPLX', '4 mẹo',
-      [Color(0xFF9C27B0), Color(0xFFE91E63)], Icons.fire_truck),
-  _Cat('age', 'Hỏi về tuổi', '1 nhóm',
-      [Color(0xFF00B09B), Color(0xFF96C93D)], Icons.person),
-  _Cat('rules', 'Cao tốc/đường hầm/nơi hạn chế', '1 nhóm',
-      [Color(0xFFfbab66), Color(0xFFf7418c)], Icons.block),
-  _Cat('priority', 'Nhất chớm – Nhì ưu – Tam – Tứ', '1 nhóm',
-      [Color(0xFF36D1DC), Color(0xFF5B86E5)], Icons.priority_high),
-  _Cat('signs', 'Biển báo & nhóm biển', '2 mẹo',
-      [Color(0xFFf7971e), Color(0xFFffd200)], Icons.traffic_outlined),
-  _Cat('speed', 'Tốc độ tối đa', '4 nhóm',
-      [Color(0xFFee0979), Color(0xFFff6a00)], Icons.speed),
-  _Cat('concept', 'Khái niệm & quy tắc nhanh', '1 nhóm',
-      [Color(0xFF12c2e9), Color(0xFFc471ed)], Icons.rule),
-  _Cat('transport', 'Nghiệp vụ vận tải', '1 nhóm',
-      [Color(0xFF43cea2), Color(0x185a9d)], Icons.local_shipping_outlined),
-  _Cat('technic', 'Kỹ thuật lái xe', '1 nhóm',
-      [Color(0xFF8E2DE2), Color(0xFF4A00E0)], Icons.handyman),
-  _Cat('mechanic', 'Cấu tạo & sửa chữa', '1 nhóm',
-      [Color(0xFF00c6ff), Color(0xFF0072ff)], Icons.build),
-];

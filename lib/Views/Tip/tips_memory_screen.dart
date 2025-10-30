@@ -2,18 +2,31 @@ import 'package:flutter/material.dart';
 import '../../Components/note_box.dart';
 import '../../Styles/app_theme.dart';
 
-class TipsMemoryScreen extends StatelessWidget {
+class TipsMemoryScreen extends StatefulWidget {
   /// Nếu truyền [onlySectionKey], màn hình chỉ hiển thị **một** chủ đề tương ứng.
-  /// Nếu null → hiển thị toàn bộ danh sách.
   final String? onlySectionKey;
   const TipsMemoryScreen({super.key, this.onlySectionKey});
 
   @override
+  State<TipsMemoryScreen> createState() => _TipsMemoryScreenState();
+}
+
+class _TipsMemoryScreenState extends State<TipsMemoryScreen> {
+  final TextEditingController _searchCtrl = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Mở từ list: render 1 section
-    if (onlySectionKey != null) {
-      final section = _sectionByKey(onlySectionKey!);
-      final title = _titleOf(onlySectionKey!);
+    if (widget.onlySectionKey != null) {
+      final section = _sectionByKey(widget.onlySectionKey!);
+      final title = _titleOf(widget.onlySectionKey!);
       return Scaffold(
         appBar: AppBar(title: Text(title), centerTitle: true),
         body: ListView(
@@ -23,30 +36,97 @@ class TipsMemoryScreen extends StatelessWidget {
       );
     }
 
-    // Mở trực tiếp: hiển thị tất cả
+    // Mở trực tiếp: hiển thị tất cả + thanh tìm kiếm
     return Scaffold(
       appBar: AppBar(
-        title: const Text('MẸO ghi nhớ 600 câu GPLX'),
-        centerTitle: true,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.only(bottom: 28),
-        children: [
-          _alcoholSection(),
-          _distanceSection(),
-          _licenseSection(),
-          _buildAgeSection(),
-          _buildProhibitionsSection(),
-          _buildPrioritySection(),
-          _buildSignsSection(),
-          _buildSpeedSection(),
-          _buildConceptsSection(),
-          _buildTransportOpsSection(),
-          _buildDrivingTechniqueSection(),
-          _buildMechanicsSection(),
-          _buildIntersectionSection(),
+        title: TextField(
+          controller: _searchCtrl,
+          decoration: const InputDecoration(
+            hintText: 'Tìm mẹo...',
+            border: InputBorder.none,
+          ),
+          onChanged: (q) => setState(() => _searchQuery = q.trim().toLowerCase()),
+        ),
+        actions: [
+          if (_searchQuery.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                _searchCtrl.clear();
+                setState(() => _searchQuery = '');
+              },
+            ),
         ],
       ),
+      body: _buildAllSectionsWithSearch(),
+    );
+  }
+
+  // ===================== Xử lý dữ liệu & tìm kiếm ======================
+
+  List<_SectionCard> _allSections() {
+    return [
+      _alcoholSection(),
+      _distanceSection(),
+      _licenseSection(),
+      _buildAgeSection(),
+      _buildProhibitionsSection(),
+      _buildPrioritySection(),
+      _buildSignsSection(),
+      _buildSpeedSection(),
+      _buildConceptsSection(),
+      _buildTransportOpsSection(),
+      _buildDrivingTechniqueSection(),
+      _buildMechanicsSection(),
+      _buildIntersectionSection(),
+    ];
+  }
+
+  Widget _buildAllSectionsWithSearch() {
+    final all = _allSections();
+
+    // Chỉ mục text đơn giản để tìm sâu vào nội dung
+    final Map<String, String> sectionTexts = {
+      'Nồng độ cồn':
+      'Người điều khiển xe mô tô ô tô máy kéo trong máu hoặc hơi thở có nồng độ cồn bị nghiêm cấm.',
+      'Khoảng cách an toàn':
+      '35m nếu V=60, 55m nếu 60<V≤80, 70m nếu 80<V≤100, 100m nếu 100<V≤120. Dưới 60 không có quy định cụ thể.',
+      'Các hạng GPLX':
+      'A1 A B C D. Số chỗ càng lớn hạng càng cao. Xe ≤8 chỗ hạng B, tải ≤3.5 tấn. D1 8–16 chỗ, D2 16–29 chỗ.',
+      'Hỏi về tuổi (T)':
+      'Xe dưới 50cm³: 16 tuổi. A1 A B1 B C1: 18 tuổi. C BE: 21 tuổi. D1 D2 C1E CE: 24 tuổi. D D1E D2E DE: 27 tuổi.',
+      'Cao tốc / đường hầm / nơi hạn chế':
+      'Không quay đầu không lùi không vượt. Không vượt cầu hẹp một làn. Cấm lùi nơi giao nhau.',
+      'Nhất chớm – Nhì ưu – Tam – Tứ':
+      'Nhất chớm, Nhì ưu, Tam đường, Tứ hướng: bên phải trống → rẽ phải → đi thẳng → rẽ trái.',
+      'Biển báo & nhóm biển':
+      '5 nhóm: Nguy hiểm, Cấm, Hiệu lệnh, Chỉ dẫn, Biển phụ. Biển cấm chuỗi nhớ Cấm ô tô → Cấm xe tải → Cấm máy kéo → Cấm rơ moóc.',
+      'Tốc độ tối đa':
+      'Trong KDC: 60 và 50. Ngoài KDC: 90/80/70/60 và 80/70/60/50 tùy loại đường. Cao tốc tối đa 120.',
+      'Khái niệm & quy tắc nhanh':
+      'Câu có “bị nghiêm cấm/không được phép” → chọn. Dừng đỗ ≤0.25m, ưu tiên đường sắt, nhường người đi bộ.',
+      'Nghiệp vụ vận tải':
+      'Không lái liên tục quá 4 giờ, không làm việc quá 10 giờ/ngày, không tự ý thay đổi điểm đón trả.',
+      'Kỹ thuật lái xe':
+      'Mô tô xuống dốc dùng cả phanh trước & sau, khởi hành AT đạp phanh, qua đường sắt dừng 5m.',
+      'Cấu tạo & sửa chữa':
+      'Còi 90–115 dB, kính an toàn, động cơ 4 kỳ, dây đai an toàn có cơ cấu hãm, niên hạn 20/25 năm.',
+      'Các quy tắc sa hình khác':
+      'Không vòng xuyến: xe vào trước đi trước. Vòng xuyến: chưa vào ưu tiên bên phải; đã vào ưu tiên xe từ trái tới. Xuống dốc nhường lên dốc.',
+    };
+
+    final filtered = _searchQuery.isEmpty
+        ? all
+        : all.where((s) {
+      final combined =
+      (s.title + ' ' + s.subtitle + ' ' + (sectionTexts[s.title] ?? ''))
+          .toLowerCase();
+      return combined.contains(_searchQuery);
+    }).toList();
+
+    return ListView(
+      padding: const EdgeInsets.only(bottom: 28),
+      children: filtered,
     );
   }
 
@@ -54,37 +134,63 @@ class TipsMemoryScreen extends StatelessWidget {
 
   _SectionCard _sectionByKey(String key) {
     switch (key) {
-      case 'alcohol':   return _alcoholSection();
-      case 'distance':  return _distanceSection();
-      case 'license':   return _licenseSection();
-      case 'age':       return _buildAgeSection();
-      case 'rules':     return _buildProhibitionsSection();
-      case 'priority':  return _buildPrioritySection();
-      case 'signs':     return _buildSignsSection();
-      case 'speed':     return _buildSpeedSection();
-      case 'concept':   return _buildConceptsSection();
-      case 'transport': return _buildTransportOpsSection();
-      case 'technic':   return _buildDrivingTechniqueSection();
-      case 'mechanic':  return _buildMechanicsSection();
-      default:          return _buildPrioritySection();
+      case 'alcohol':
+        return _alcoholSection();
+      case 'distance':
+        return _distanceSection();
+      case 'license':
+        return _licenseSection();
+      case 'age':
+        return _buildAgeSection();
+      case 'rules':
+        return _buildProhibitionsSection();
+      case 'priority':
+        return _buildPrioritySection();
+      case 'signs':
+        return _buildSignsSection();
+      case 'speed':
+        return _buildSpeedSection();
+      case 'concept':
+        return _buildConceptsSection();
+      case 'transport':
+        return _buildTransportOpsSection();
+      case 'technic':
+        return _buildDrivingTechniqueSection();
+      case 'mechanic':
+        return _buildMechanicsSection();
+      default:
+        return _buildPrioritySection();
     }
   }
 
   String _titleOf(String key) {
     switch (key) {
-      case 'alcohol':   return 'Nồng độ cồn';
-      case 'distance':  return 'Khoảng cách an toàn';
-      case 'license':   return 'Các hạng GPLX';
-      case 'age':       return 'Hỏi về tuổi (T)';
-      case 'rules':     return 'Cao tốc / đường hầm / nơi hạn chế';
-      case 'priority':  return 'Nhất chớm – Nhì ưu – Tam – Tứ';
-      case 'signs':     return 'Biển báo & nhóm biển';
-      case 'speed':     return 'Tốc độ tối đa';
-      case 'concept':   return 'Khái niệm & quy tắc nhanh';
-      case 'transport': return 'Nghiệp vụ vận tải';
-      case 'technic':   return 'Kỹ thuật lái xe';
-      case 'mechanic':  return 'Cấu tạo & sửa chữa';
-      default:          return 'Mẹo ghi nhớ';
+      case 'alcohol':
+        return 'Nồng độ cồn';
+      case 'distance':
+        return 'Khoảng cách an toàn';
+      case 'license':
+        return 'Các hạng GPLX';
+      case 'age':
+        return 'Hỏi về tuổi (T)';
+      case 'rules':
+        return 'Cao tốc / đường hầm / nơi hạn chế';
+      case 'priority':
+        return 'Nhất chớm – Nhì ưu – Tam – Tứ';
+      case 'signs':
+        return 'Biển báo & nhóm biển';
+      case 'speed':
+        return 'Tốc độ tối đa';
+      case 'concept':
+        return 'Khái niệm & quy tắc nhanh';
+      case 'transport':
+        return 'Nghiệp vụ vận tải';
+      case 'technic':
+        return 'Kỹ thuật lái xe';
+      case 'mechanic':
+        return 'Cấu tạo & sửa chữa';
+      default:
+        return 'Mẹo ghi nhớ';
     }
   }
 
@@ -203,7 +309,7 @@ class TipsMemoryScreen extends StatelessWidget {
 
   // ===================== Các section còn lại =====================
 
-  static _SectionCard _buildAgeSection() {
+  _SectionCard _buildAgeSection() {
     return _SectionCard(
       title: 'Hỏi về tuổi (T)',
       subtitle: '1 nhóm mẹo',
@@ -227,7 +333,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildProhibitionsSection() {
+  _SectionCard _buildProhibitionsSection() {
     return _SectionCard(
       title: 'Cao tốc / đường hầm / nơi hạn chế',
       subtitle: 'Mẹo không được làm',
@@ -245,7 +351,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildPrioritySection() {
+  _SectionCard _buildPrioritySection() {
     return _SectionCard(
       title: 'Nhất chớm – Nhì ưu – Tam đường – Tứ hướng',
       subtitle: 'Thứ tự ưu tiên',
@@ -263,7 +369,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildSignsSection() {
+  _SectionCard _buildSignsSection() {
     return _SectionCard(
       title: 'Biển báo & nhóm biển',
       subtitle: '5 nhóm chính',
@@ -289,7 +395,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildSpeedSection() {
+  _SectionCard _buildSpeedSection() {
     return _SectionCard(
       title: 'Tốc độ tối đa',
       subtitle: 'Trong/ngoài KDC & cao tốc',
@@ -331,7 +437,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildConceptsSection() {
+  _SectionCard _buildConceptsSection() {
     return _SectionCard(
       title: 'Khái niệm & quy tắc nhanh',
       subtitle: 'Mẹo chọn đáp án',
@@ -353,7 +459,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildTransportOpsSection() {
+  _SectionCard _buildTransportOpsSection() {
     return _SectionCard(
       title: 'Nghiệp vụ vận tải',
       subtitle: 'Quy định thời gian',
@@ -370,7 +476,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildDrivingTechniqueSection() {
+  _SectionCard _buildDrivingTechniqueSection() {
     return _SectionCard(
       title: 'Kỹ thuật lái xe',
       subtitle: 'Mẹo thao tác',
@@ -389,7 +495,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildMechanicsSection() {
+  _SectionCard _buildMechanicsSection() {
     return _SectionCard(
       title: 'Cấu tạo & sửa chữa',
       subtitle: 'Thông số hay hỏi',
@@ -413,7 +519,7 @@ class TipsMemoryScreen extends StatelessWidget {
     );
   }
 
-  static _SectionCard _buildIntersectionSection() {
+  _SectionCard _buildIntersectionSection() {
     return _SectionCard(
       title: 'Các quy tắc sa hình khác',
       subtitle: 'Ưu tiên & dốc',
@@ -489,7 +595,8 @@ class _SectionCard extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch, // cho ô con full-width, bằng nhau
+                crossAxisAlignment:
+                CrossAxisAlignment.stretch, // cho ô con full-width, bằng nhau
                 children: children,
               ),
             ),
