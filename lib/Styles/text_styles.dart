@@ -12,4 +12,20 @@ class AppTextStyles {
     color: AppColors.textWhite,
     fontSize: 14,
   );
+  static const TextStyle title = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.bold,
+    color: Colors.white,
+  );
+
+  static const TextStyle heading = TextStyle(
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
+    color: Colors.white,
+  );
+
+  static const TextStyle bodySmall = TextStyle(
+    fontSize: 14,
+    color: Colors.white70,
+  );
 }
