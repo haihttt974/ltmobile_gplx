@@ -1,5 +1,6 @@
 import 'package:doan/Views/BienBao/bien_bao_list_view.dart';
-import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart';
+import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart' hide SelectBoDeTnView;
+import 'package:doan/Views/Tip/tips_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -7,7 +8,6 @@ import '../../Styles/app_colors.dart';
 import '../Auth/login_view.dart';
 import '../Rank/select_hang_view.dart';
 import '../SetOfQuestions/select_bo_de_tn_view.dart'; 
-import '../Tip/tips_list_screen.dart';
 
 
 class MainHomeView extends StatefulWidget {

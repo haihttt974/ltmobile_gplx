@@ -4,11 +4,13 @@ class BienBaoModel {
   final int idBienBao;
   final String tenBienBao;
   final String hinhAnh;
+  final String? danhGia; // có thể null
 
   BienBaoModel({
     required this.idBienBao,
     required this.tenBienBao,
     required this.hinhAnh,
+    this.danhGia,
   });
 
   factory BienBaoModel.fromJson(Map<String, dynamic> json) {
@@ -16,6 +18,7 @@ class BienBaoModel {
       idBienBao: json['idBienBao'],
       tenBienBao: json['tenBienBao'],
       hinhAnh: json['hinhAnh'],
+      danhGia: json['danhGia'],
     );
   }
 }
