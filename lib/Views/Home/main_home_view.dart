@@ -11,6 +11,7 @@ import '../Rank/select_hang_view.dart';
 import 'package:doan/Service/api_service.dart'; // có ApiService.baseUrl (static const)
 import 'package:doan/Service/sim_api.dart';     // SimApi(baseUrl, token)
 import '../sim/sim_home_view.dart';
+import '../sim/test_video.dart';
 
 class MainHomeView extends StatefulWidget {
   const MainHomeView({super.key});
@@ -180,7 +181,15 @@ class _MainHomeViewState extends State<MainHomeView> {
                   minimumSize: const Size.fromHeight(48),
                 ),
               ),
-
+              // ElevatedButton(
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(builder: (_) => const TestVideoScreen()),
+              //     );
+              //   },
+              //   child: const Text('🔧 Test Video'),
+              // ),
               const SizedBox(height: 18),
               OutlinedButton.icon(
                 onPressed: _changeHang,

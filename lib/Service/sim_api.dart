@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import '../Models/bo_de_mp.dart';
 import '../Models/tinh_huong.dart';
 import '../Models/ket_qua_mp.dart';
@@ -10,20 +13,37 @@ class SimApi {
       : _dio = Dio(BaseOptions(
     baseUrl: '$baseUrl/sim',
     headers: {'Authorization': 'Bearer $jwt'},
-  ));
+    connectTimeout: const Duration(seconds: 10),
+    receiveTimeout: const Duration(seconds: 10),
+    followRedirects: true,  // ✅ THÊM
+    maxRedirects: 5,         // ✅ THÊM
+  )) {
+    // Thêm đoạn này để bỏ qua SSL certificate verification
+    (_dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+      final client = HttpClient();
+      client.badCertificateCallback =
+          (X509Certificate cert, String host, int port) => true;
+      return client;
+    };
+    // Log để debug
+    _dio.interceptors.add(LogInterceptor(
+      request: true,
+      requestBody: true,
+      responseBody: true,
+      error: true,
+    ));
+  }
 
   // Bộ đề
   Future<List<BoDeMp>> listBoDe() async {
     final rs = await _dio.get('/bo-de');
     return (rs.data as List).map((e) => BoDeMp.fromJson(e)).toList();
-    // [{IdBoDe, TenBoDe, SoTinhHuong, TaoLuc}]
   }
 
   // Lấy tình huống trong bộ đề
   Future<List<TinhHuong>> getBoDe(int idBoDe) async {
     final rs = await _dio.get('/bo-de/$idBoDe');
     return (rs.data as List).map((e) => TinhHuong.fromJson(e)).toList();
-    // [{IdTinhHuong, ThuTu, IdBoDe, TieuDe, Video, Start, End}]
   }
 
   // Nộp bài theo bộ đề (có lưu lịch sử)
@@ -92,4 +112,9 @@ class SimApi {
     return (rs.data as List).cast<Map<String, dynamic>>();
     // [{IdTinhHuong, IdChuong, TieuDe, UrlAnhMeo}]
   }
+  Future<List<TinhHuong>> getMeo() async {
+    final rs = await _dio.get('/meo');
+    return (rs.data as List).map((e) => TinhHuong.fromJson(e)).toList();
+  }
+
 }

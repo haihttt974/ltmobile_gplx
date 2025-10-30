@@ -30,6 +30,7 @@ class _TinhHuongPlayerState extends State<TinhHuongPlayer> {
   @override
   void initState() {
     super.initState();
+    print('🎬 Video URL: ${widget.url}');
     _initializeVideo();
   }
 

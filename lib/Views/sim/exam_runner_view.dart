@@ -26,25 +26,56 @@ class _ExamRunnerViewState extends State<ExamRunnerView> {
   List<Map<String, dynamic>>? chiTiet;
 
   Future<void> _submit() async {
+    print('🔄 Bắt đầu nộp bài...');
+    print('📝 Số câu đã click: ${clicks.length}');
+    print('📋 Chi tiết clicks: $clicks');
+
     final payload = clicks.entries
         .map((e) => {'idTinhHuong': e.key, 'thoiDiemNhan': e.value})
         .toList();
 
+    print('📤 Payload gửi lên: $payload');
+
     final mode = widget.mode;
     final api = widget.api;
 
-    var kq = switch (mode) {
-      ExamMode.boDe   => await api.nopBaiBoDe(widget.idBoDe!, payload),
-      ExamMode.random => await api.randomSubmit(payload),
-      ExamMode.kho    => await api.randomKhoSubmit(payload),
-    };
+    try {
+      print('⏳ Đang gọi API...');
 
-    setState(() {
-      tongDiem = kq.tongDiem;
-      dat = kq.dat;
-      chiTiet = kq.chiTiet;
-    });
+      var kq = switch (mode) {
+        ExamMode.boDe   => await api.nopBaiBoDe(widget.idBoDe!, payload),
+        ExamMode.random => await api.randomSubmit(payload),
+        ExamMode.kho    => await api.randomKhoSubmit(payload),
+      };
+
+      print('✅ Nhận kết quả: $kq');
+      print('📊 Tổng điểm: ${kq.tongDiem}');
+      print('🎯 Đạt: ${kq.dat}');
+
+      setState(() {
+        tongDiem = kq.tongDiem;
+        dat = kq.dat;
+        chiTiet = kq.chiTiet;
+      });
+
+      print('✅ Đã cập nhật UI');
+    } catch (e, stackTrace) {
+      print('❌ LỖI KHI NỘP BÀI: $e');
+      print('Stack trace: $stackTrace');
+
+      // Hiển thị lỗi cho user
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Lỗi nộp bài: $e'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
