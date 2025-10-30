@@ -130,7 +130,17 @@ class _MainHomeViewState extends State<MainHomeView> {
                       ),
                     ),
                     const SizedBox(height: 12),
-
+                    ElevatedButton.icon(
+                      onPressed: _openMoPhong,
+                      icon: const Icon(Icons.slow_motion_video),
+                      label: const Text("Ôn mô phỏng"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        minimumSize: const Size.fromHeight(48),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
                     // Đổi hạng
                     SizedBox(
                       width: double.infinity,
@@ -202,30 +212,30 @@ class _MainHomeViewState extends State<MainHomeView> {
                     // ),
                     // const SizedBox(height: 12),
                     //
-                    // // Biển báo
-                    // SizedBox(
-                    //   width: double.infinity,
-                    //   child: ElevatedButton.icon(
-                    //     onPressed: () {
-                    //       Navigator.push(
-                    //         context,
-                    //         MaterialPageRoute(
-                    //           builder: (_) => const BienBaoListView(),
-                    //         ),
-                    //       );
-                    //     },
-                    //     icon: const Icon(Icons.traffic),
-                    //     label: const Text("Biển báo"),
-                    //     style: ElevatedButton.styleFrom(
-                    //       backgroundColor: Colors.orangeAccent,
-                    //       foregroundColor: Colors.white,
-                    //       padding: const EdgeInsets.symmetric(vertical: 14),
-                    //       shape: RoundedRectangleBorder(
-                    //         borderRadius: BorderRadius.circular(12),
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
+                    // Biển báo
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const BienBaoListView(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.traffic),
+                        label: const Text("Biển báo"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.orangeAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
                     // const SizedBox(height: 12),
                     //
                     // // Ôn tập theo chương
