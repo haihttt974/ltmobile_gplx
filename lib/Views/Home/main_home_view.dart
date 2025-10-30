@@ -1,5 +1,4 @@
 import 'package:doan/Views/BienBao/bien_bao_list_view.dart';
-import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart' hide SelectBoDeTnView;
 import 'package:doan/Views/Tip/tips_list_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,10 +10,9 @@ import '../SetOfQuestions/select_bo_de_tn_view.dart';
 
 
 // Services
-import 'package:doan/Service/api_service.dart'; // có ApiService.baseUrl (static const)
-import 'package:doan/Service/sim_api.dart';     // SimApi(baseUrl, token)
+import '../../Service/api_service.dart';
+import '../../Service/sim_api.dart';
 import '../sim/sim_home_view.dart';
-import '../sim/test_video.dart';
 
 class MainHomeView extends StatefulWidget {
   const MainHomeView({super.key});
@@ -214,9 +212,9 @@ class _MainHomeViewState extends State<MainHomeView> {
                       foregroundColor: Colors.white,
                     ),
                   ),
-                ),
-                const SizedBox(height: 22),
-              ],
+                    const SizedBox(height: 22),
+                ],
+              ),
 
               // 3 nút chính theo yêu cầu
               ElevatedButton.icon(
@@ -271,10 +269,9 @@ class _MainHomeViewState extends State<MainHomeView> {
                   minimumSize: const Size.fromHeight(44),
                 ),
               ),
-            ],
+          ],
           ),
         ),
-      ),
     );
   }
 }
