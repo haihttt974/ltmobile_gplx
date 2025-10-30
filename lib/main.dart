@@ -1,8 +1,11 @@
 // main.dart
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 // Auth screens
+import 'Utils/http_overrides.dart';
 import 'Views/Auth/splash_view.dart';
 import 'Views/Auth/login_view.dart';
 import 'Views/Auth/register_view.dart';
@@ -15,6 +18,7 @@ import 'Views/Auth/forgot_password_newpass_view.dart';
 import 'Views/Home/main_home_view.dart';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
   runApp(const GPLXApp());
 }
 

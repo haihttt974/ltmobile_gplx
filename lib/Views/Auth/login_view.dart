@@ -84,7 +84,7 @@ class _LoginViewState extends State<LoginView> {
       backgroundColor: AppColors.bgDark,
       body: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.all(24),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 360),
             child: Container(
