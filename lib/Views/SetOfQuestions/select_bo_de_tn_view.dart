@@ -21,7 +21,6 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
   List<BoDeTnModel> _boDeList = [];
   String? _hangName;
 
-  // lưu kết quả theo từng bộ đề
   final Map<int, LastExamResult> _lastByExam = {};
 
   @override
@@ -37,7 +36,6 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
       final data = await _repository.getBoDeTheoHang();
       _boDeList = data;
 
-      // load result cho từng bộ đề
       for (final b in _boDeList) {
         final r = await ResultPrefs.loadForExam(b.idBoDe);
         if (r != null) _lastByExam[b.idBoDe] = r;
@@ -65,10 +63,19 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundDark,
+      backgroundColor: Colors.white, // ✅ Nền trắng
       appBar: AppBar(
-        backgroundColor: AppColors.backgroundDark,
-        title: Text('Đề thi ${_hangName ?? ""}', style: AppTextStyles.titleLarge),
+        backgroundColor: Colors.white, // ✅ AppBar trắng
+        elevation: 0.5,
+        iconTheme: const IconThemeData(color: Colors.black), // icon màu đen
+        title: Text(
+          'Đề thi ${_hangName ?? ""}',
+          style: const TextStyle(
+            color: Colors.black, // ✅ chữ đen
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
       body: _boDeList.isEmpty
           ? const Center(child: CircularProgressIndicator())
@@ -84,15 +91,23 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.15),
+                  blurRadius: 5,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: ListTile(
               leading: CircleAvatar(
                 radius: 26,
-                backgroundColor: Colors.blue.shade100,
+                backgroundColor: Colors.grey.shade200,
                 child: Text(
                   '${index + 1}',
                   style: const TextStyle(
-                    color: Colors.blue,
+                    color: Colors.black, // ✅ chữ đen
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
                   ),
@@ -100,16 +115,16 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
               ),
               title: Text(
                 boDe.tenBoDe,
-                style: const TextStyle(fontWeight: FontWeight.w600),
+                style: const TextStyle(
+                  color: Colors.black, // ✅ chữ đen
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               subtitle: Text(
                 '${boDe.soCauHoi} câu hỏi • ${boDe.thoiGian} phút',
                 style: const TextStyle(color: Colors.black54),
               ),
-
-              // ✅ Trailing: kết quả gần nhất của chính bộ đề này
               trailing: _buildTrailingResult(r),
-
               onTap: () async {
                 await Navigator.push(
                   context,
@@ -120,7 +135,6 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
                     ),
                   ),
                 );
-                // quay về thì refresh chỉ bộ đề vừa làm
                 await _refreshOne(boDe.idBoDe);
               },
             ),
@@ -130,7 +144,6 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
     );
   }
 
-  // Hiển thị icon ✓ số đúng & ✗ số sai (nhẹ như ảnh bạn gửi)
   Widget _buildTrailingResult(LastExamResult? r) {
     final bool has = r != null;
     final Color faint = Colors.black.withOpacity(0.28);
@@ -139,24 +152,25 @@ class _SelectBoDeTnViewState extends State<SelectBoDeTnView> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(Icons.check_circle,
-            color: has ? const Color(0xFF22C55E) : faint, size: 22),
+            color: has ? const Color(0xFF22C55E) : faint, size: 14),
         const SizedBox(width: 6),
         Text(
           '${has ? r!.dung : 0}',
           style: TextStyle(
             fontSize: 16,
-            color: has ? Colors.black87 : faint,
+            color: has ? Colors.black : faint, // ✅ chữ đen
             fontWeight: FontWeight.w600,
           ),
         ),
         const SizedBox(width: 16),
-        Icon(Icons.cancel, color: has ? const Color(0xFFEF4444) : faint, size: 22),
+        Icon(Icons.cancel,
+            color: has ? const Color(0xFFEF4444) : faint, size: 14),
         const SizedBox(width: 6),
         Text(
           '${has ? r!.sai : 0}',
           style: TextStyle(
             fontSize: 16,
-            color: has ? Colors.black87 : faint,
+            color: has ? Colors.black : faint, // ✅ chữ đen
             fontWeight: FontWeight.w600,
           ),
         ),

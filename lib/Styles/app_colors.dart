@@ -9,4 +9,5 @@ class AppColors {
   static const backgroundDark = Color(0xFF0E1621);
   static const cardNormal = Color(0xFF1E2A38);
   static const cardSelected = Color(0xFF243B55);
+  static const Color bgPrimary = Color(0xFF0F172A);
 }

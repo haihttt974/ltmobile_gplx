@@ -1,14 +1,14 @@
 import 'package:doan/Views/BienBao/bien_bao_list_view.dart';
+import 'package:doan/Views/Chapter/on_tap_theo_chuong_view.dart';
 import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart';
+import 'package:doan/Views/Home/home_trac_nghiem_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../Styles/app_colors.dart';
 import '../Auth/login_view.dart';
 import '../Rank/select_hang_view.dart';
-import '../SetOfQuestions/select_bo_de_tn_view.dart'; 
 import '../Tip/tips_list_screen.dart';
-
 
 class MainHomeView extends StatefulWidget {
   const MainHomeView({super.key});
@@ -64,7 +64,6 @@ class _MainHomeViewState extends State<MainHomeView> {
           "Trang chính",
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
-
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
@@ -74,108 +73,205 @@ class _MainHomeViewState extends State<MainHomeView> {
         ],
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_userEmail != null)
-              Text(
-                "Xin chào, $_userEmail!",
-                style: const TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            const SizedBox(height: 16),
-            if (_selectedHangName != null)
-              Column(
-                children: [
-                  const Text(
-                    "Hạng GPLX hiện tại:",
-                    style: TextStyle(color: Colors.white70, fontSize: 16),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    _selectedHangName!,
-                    style: const TextStyle(
-                      color: Colors.lightBlueAccent,
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Đổi hạng
-
-                  ElevatedButton.icon(
-                    onPressed: _changeHang,
-                    icon: const Icon(Icons.swap_horiz),
-                    label: const Text("Đổi hạng khác"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Bộ đề trắc nghiệm
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const SelectBoDeTnView(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.library_books),
-                    label: const Text("Bộ đề trắc nghiệm"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blueAccent,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // 🔥 Mẹo ghi nhớ
-
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const TipsListScreen(),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.tips_and_updates_outlined),
-                    label: const Text("Mẹo ghi nhớ"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF22C55E),
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-				          ElevatedButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const BienBaoListView()),
-                      );
-                    },
-                    icon: const Icon(Icons.traffic),
-                    label: const Text("Biển báo"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orangeAccent,
-                      foregroundColor: Colors.white,
-                    ),
-                  ),
-                ],
-              )
-            else
-              ElevatedButton.icon(
-                onPressed: _changeHang,
-                icon: const Icon(Icons.settings),
-                label: const Text("Chọn hạng GPLX"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blueAccent,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_userEmail != null)
+                Text(
+                  "Xin chào, $_userEmail!",
+                  style: const TextStyle(color: Colors.white, fontSize: 18),
                 ),
-              ),
-          ],
+              const SizedBox(height: 16),
+              if (_selectedHangName != null)
+                Column(
+                  children: [
+                    const Text(
+                      "Hạng GPLX hiện tại:",
+                      style: TextStyle(color: Colors.white70, fontSize: 16),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      _selectedHangName!,
+                      style: const TextStyle(
+                        color: Colors.lightBlueAccent,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // ===== NÚT ÔN TRẮC NGHIỆM (MỚI) =====
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const HomeTracNghiemView(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.school, size: 24),
+                        label: const Text(
+                          "Ôn trắc nghiệm",
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                        ),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF2563EB),
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Đổi hạng
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        onPressed: _changeHang,
+                        icon: const Icon(Icons.swap_horiz),
+                        label: const Text("Đổi hạng khác"),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.blueAccent,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+
+                    // Bộ đề trắc nghiệm
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: ElevatedButton.icon(
+                    //     onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (_) => const SelectBoDeTnView(),
+                    //         ),
+                    //       );
+                    //     },
+                    //     icon: const Icon(Icons.library_books),
+                    //     label: const Text("Bộ đề trắc nghiệm"),
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.blueAccent,
+                    //       foregroundColor: Colors.white,
+                    //       padding: const EdgeInsets.symmetric(vertical: 14),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 12),
+                    //
+                    // // Mẹo ghi nhớ
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: ElevatedButton.icon(
+                    //     onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (_) => const TipsListScreen(),
+                    //         ),
+                    //       );
+                    //     },
+                    //     icon: const Icon(Icons.tips_and_updates_outlined),
+                    //     label: const Text("Mẹo ghi nhớ"),
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: const Color(0xFF22C55E),
+                    //       foregroundColor: Colors.white,
+                    //       padding: const EdgeInsets.symmetric(vertical: 14),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 12),
+                    //
+                    // // Biển báo
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: ElevatedButton.icon(
+                    //     onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (_) => const BienBaoListView(),
+                    //         ),
+                    //       );
+                    //     },
+                    //     icon: const Icon(Icons.traffic),
+                    //     label: const Text("Biển báo"),
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.orangeAccent,
+                    //       foregroundColor: Colors.white,
+                    //       padding: const EdgeInsets.symmetric(vertical: 14),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // const SizedBox(height: 12),
+                    //
+                    // // Ôn tập theo chương
+                    // SizedBox(
+                    //   width: double.infinity,
+                    //   child: ElevatedButton.icon(
+                    //     onPressed: () {
+                    //       Navigator.push(
+                    //         context,
+                    //         MaterialPageRoute(
+                    //           builder: (_) => const OnTapTheoChuongView(),
+                    //         ),
+                    //       );
+                    //     },
+                    //     icon: const Icon(Icons.menu_book),
+                    //     label: const Text("Ôn tập theo chương"),
+                    //     style: ElevatedButton.styleFrom(
+                    //       backgroundColor: Colors.orangeAccent,
+                    //       foregroundColor: Colors.white,
+                    //       padding: const EdgeInsets.symmetric(vertical: 14),
+                    //       shape: RoundedRectangleBorder(
+                    //         borderRadius: BorderRadius.circular(12),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                  ],
+                )
+              else
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _changeHang,
+                    icon: const Icon(Icons.settings),
+                    label: const Text("Chọn hạng GPLX"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueAccent,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
         ),
       ),
     );
