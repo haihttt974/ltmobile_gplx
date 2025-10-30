@@ -1,9 +1,11 @@
-import 'package:doan/Views/SetOfQuestions/select_bo_de_tn_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 import '../../Styles/app_colors.dart';
 import '../Auth/login_view.dart';
 import '../Rank/select_hang_view.dart';
+import '../SetOfQuestions/select_bo_de_tn_view.dart';
+import '../Tip/tips_list_screen.dart';
 
 class MainHomeView extends StatefulWidget {
   const MainHomeView({super.key});
@@ -49,15 +51,16 @@ class _MainHomeViewState extends State<MainHomeView> {
     _loadUserData(); // cập nhật lại sau khi chọn hạng
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.bgDark,
       appBar: AppBar(
         backgroundColor: AppColors.bgDark,
-        title: const Text("Trang chính",
-            style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600)),
+        title: const Text(
+          "Trang chính",
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
+        ),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout, color: Colors.white),
@@ -79,9 +82,9 @@ class _MainHomeViewState extends State<MainHomeView> {
             if (_selectedHangName != null)
               Column(
                 children: [
-                  Text(
+                  const Text(
                     "Hạng GPLX hiện tại:",
-                    style: const TextStyle(color: Colors.white70, fontSize: 16),
+                    style: TextStyle(color: Colors.white70, fontSize: 16),
                   ),
                   const SizedBox(height: 6),
                   Text(
@@ -93,6 +96,8 @@ class _MainHomeViewState extends State<MainHomeView> {
                     ),
                   ),
                   const SizedBox(height: 16),
+
+                  // Đổi hạng
                   ElevatedButton.icon(
                     onPressed: _changeHang,
                     icon: const Icon(Icons.swap_horiz),
@@ -101,17 +106,41 @@ class _MainHomeViewState extends State<MainHomeView> {
                       backgroundColor: Colors.blueAccent,
                     ),
                   ),
+                  const SizedBox(height: 10),
+
+                  // Bộ đề trắc nghiệm
                   ElevatedButton.icon(
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (_) => const SelectBoDeTnView()),
+                        MaterialPageRoute(
+                          builder: (_) => const SelectBoDeTnView(),
+                        ),
                       );
                     },
                     icon: const Icon(Icons.library_books),
                     label: const Text("Bộ đề trắc nghiệm"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.blueAccent,
+                      foregroundColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // 🔥 Mẹo ghi nhớ
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const TipsListScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.tips_and_updates_outlined),
+                    label: const Text("Mẹo ghi nhớ"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF22C55E),
                       foregroundColor: Colors.white,
                     ),
                   ),

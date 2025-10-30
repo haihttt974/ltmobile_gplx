@@ -54,11 +54,6 @@ class SectionCard extends StatelessWidget {
                 ],
               ),
             ),
-            // Body
-            Padding(
-              padding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
-              child: Column(children: children),
-            ),
           ],
         ),
       ),
