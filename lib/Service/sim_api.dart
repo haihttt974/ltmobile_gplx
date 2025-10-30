@@ -13,8 +13,8 @@ class SimApi {
       : _dio = Dio(BaseOptions(
     baseUrl: '$baseUrl/sim',
     headers: {'Authorization': 'Bearer $jwt'},
-    connectTimeout: const Duration(seconds: 10),
-    receiveTimeout: const Duration(seconds: 10),
+    connectTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
     followRedirects: true,  // ✅ THÊM
     maxRedirects: 5,         // ✅ THÊM
   )) {
