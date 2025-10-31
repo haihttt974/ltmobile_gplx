@@ -5,10 +5,13 @@ import 'package:doan/Views/Home/home_trac_nghiem_view.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../Service/api_service.dart';
+import '../../Service/sim_api.dart';
 import '../../Styles/app_colors.dart';
 import '../Auth/login_view.dart';
 import '../Rank/select_hang_view.dart';
 import '../Tip/tips_list_screen.dart';
+import '../sim/sim_home_view.dart';
 
 class MainHomeView extends StatefulWidget {
   const MainHomeView({super.key});
@@ -53,7 +56,35 @@ class _MainHomeViewState extends State<MainHomeView> {
     );
     _loadUserData(); // cập nhật lại sau khi chọn hạng
   }
+  // Lấy token đã lưu
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('auth_token') ??   // <-- quan trọng: key đang dùng khi login
+        prefs.getString('jwt_token') ??
+        prefs.getString('access_token') ??
+        prefs.getString('token');
+  }
 
+
+  Future<void> _openMoPhong() async {
+    final token = await _getToken();
+    if (token == null || token.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chưa có token đăng nhập. Vui lòng đăng nhập lại.')),
+      );
+      return;
+    }
+
+    // ApiService.baseUrl là static const trong api_service.dart
+    final api = SimApi(ApiService.baseUrl, token);
+
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => SimHomeView(api: api)),
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(

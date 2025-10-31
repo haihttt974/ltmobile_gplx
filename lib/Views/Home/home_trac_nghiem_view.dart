@@ -158,19 +158,19 @@ class _HomeTracNghiemViewState extends State<HomeTracNghiemView> {
                   //     // TODO: Navigate to top 50
                   //   },
                   // ),
-                  // _buildFeatureCard(
-                  //   title: 'Các biển báo',
-                  //   icon: Icons.traffic,
-                  //   color: const Color(0xFF2196F3),
-                  //   onTap: () {
-                  //     Navigator.push(
-                  //       context,
-                  //       MaterialPageRoute(
-                  //         builder: (_) => const BienBaoListView(),
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
+                  _buildFeatureCard(
+                    title: 'Các biển báo',
+                    icon: Icons.traffic,
+                    color: const Color(0xFF2196F3),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const BienBaoListView(),
+                        ),
+                      );
+                    },
+                  ),
                   _buildFeatureCard(
                     title: 'Mẹo ghi nhớ',
                     icon: Icons.lightbulb_outline,
